@@ -3,13 +3,13 @@ import { styled } from '@mui/material/styles';
 
 const LightGreenSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
-    color: '#81c784', // Light green color for the thumb
+    color: '#81c784', 
     '& + .MuiSwitch-track': {
-      backgroundColor: '#81c784', // Light green color for the track
+      backgroundColor: '#81c784', 
     },
   },
   '& .MuiSwitch-track': {
-    backgroundColor: theme.palette.grey[400], // Default track color when off
+    backgroundColor: theme.palette.grey[400], 
   },
 }));
 
@@ -22,3 +22,5 @@ export default function BasicSwitches() {
     </div>
   );
 }
+
+

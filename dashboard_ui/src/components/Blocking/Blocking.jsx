@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BasicSwitches from "../Toogle/Toogle";
 import Switch from '@mui/material/Switch';
 
@@ -11,6 +11,13 @@ const Blocking = () => {
     { id: 3, name: "Bard", isEnabled: false, url: "/dummy-url/bard" },
   ]);
 
+  const [isBlocked, setIsBlocked] = useState(false);
+
+  useEffect(() => {
+    const allBlocked = aiTools.every(tool => tool.isEnabled);
+    setIsBlocked(allBlocked);
+  }, [aiTools]);
+
   const handleSwitchChange = (id) => () => {
     setAiTools((prevTools) =>
       prevTools.map((tool) =>
@@ -20,53 +27,67 @@ const Blocking = () => {
 
     setTimeout(() => {
       setAiTools((prevTools) => prevTools.filter((tool) => tool.id !== id));
-    }, 2000); // Delay before blocking the tool
+    }, 500); 
   };
 
   const handleBlockAll = () => {
     setAiTools((prevTools) =>
       prevTools.map((tool) => ({ ...tool, isEnabled: true }))
     );
+    setIsBlocked(true);
 
     setTimeout(() => {
       setAiTools([]);
-    }, 2000); // Delay before blocking all tools
+    }, 500); 
   };
 
   return (
-    <div className="flex flex-col justify-between bg-gray-800 text-white p-4 rounded-xl h-1/4">
-      <div className="flex justify-between">
-        <div className="flex flex-col items-center justify-center w-1/4 bg-black p-4 rounded-lg">
-        <h2 className="text-2xl font-bold align- mb-4">Master Control </h2>
-          <div className="h-10 bg-gray-800 w-full rounded-lg" onClick={handleBlockAll}>
-            <Switch {...label} />
+    <div className="flex flex-col bg-black  text-gray-100 p-6 rounded-3xl shadow-lg w-full max-w-4xl mx-auto mt-10">
+      <div className="flex justify-between items-start gap-20">
+        <div className="flex flex-col  bg-gray-700 p-6 rounded-3xl shadow-md w-1/2 h-80">
+          <h2 className="text-2xl font-semibold ">Master Control</h2>
+          <div>
+            <button
+              onClick={handleBlockAll}
+              className={`rounded-full w-28 h-28 border-white  items-center mt-16 justify-center border-4 ${
+                isBlocked ? "bg-red-500" : "bg-green-500"
+              }`}
+            >
+              <p className="font-bold text-white">{isBlocked ? "BLOCKED" : "BLOCK"}</p>
+            </button>
           </div>
         </div>
-        <div className="w-2/4 ml-4 bg-gray-900 p-4 rounded-lg">
-        <h2 className="text-2xl font-bold text-center mb-4">Blocking Engine</h2>
-          <ul className="space-y-6">
-            {aiTools.map((tool) => (
-              <li
-                key={tool.id}
-                className={`flex items-center justify-between bg-gray-700 p-2 rounded-lg ${
-                  tool.isEnabled ? "bg-green-500" : ""
-                }`}
-              >
-                <div className="flex items-center space-x-4">
-                  <p
-                    className={`pl-2 ${
-                      tool.isEnabled ? "text-white line-through" : "text-white"
-                    }`}
-                  >
-                    {tool.name}
-                  </p>
-                </div>
-                <div onClick={handleSwitchChange(tool.id)}>
-                  <BasicSwitches checked={tool.isEnabled} />
-                </div>
-              </li>
-            ))}
-          </ul>
+        <div className="flex flex-col items-start justify-start bg-gray-700 p-6 rounded-3xl shadow-md w-1/2 h-80">
+          <h2 className="text-2xl font-semibold text-center pl-20 mb-4">Blocking Engine</h2>
+          {isBlocked ? (
+            <p className="text-xl text-green-500 font-bold">
+              Your system is safe from AI threats.
+            </p>
+          ) : (
+            <ul className="space-y-4 w-full">
+              {aiTools.map((tool) => (
+                <li
+                  key={tool.id}
+                  className={`flex items-center justify-between p-4 rounded-lg transition ${
+                    tool.isEnabled ? "bg-gray-900" : "bg-gray-700"
+                  }`}
+                >
+                  <div className="flex items-center space-x-4 w-full">
+                    <p
+                      className={`text-lg ${
+                        tool.isEnabled ? "text-green-500" : "text-gray-300"
+                      }`}
+                    >
+                      {tool.name}
+                    </p>
+                  </div>
+                  <div onClick={handleSwitchChange(tool.id)}>
+                    <BasicSwitches checked={tool.isEnabled} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
